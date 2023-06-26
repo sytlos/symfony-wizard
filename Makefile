@@ -11,7 +11,7 @@ git:
 	@read -p "What is your Git repository url ? " repositoryurl;\
 	rm -fr .git;\
 	git init;\
-	git remote set-url origin $$repositoryurl;\
+	git remote add origin $$repositoryurl;\
 	mv .gitignore.wizard .gitignore
 
 end:
