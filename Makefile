@@ -1,12 +1,29 @@
-install: check-requirements create-project
+install: check-requirements create-project git end
 
-check-requirements: check-php check-composer
+check-requirements: check-git check-php check-composer
 
 create-project:
 	@read -p "Enter project name: " projectname;\
 	composer create-project symfony/skeleton ./$$projectname; \
-	mv $$projectname/* .;\
-	mv . $$projectname
+	mv $$projectname/* .
+
+git:
+	@read -p "What is your Git repository url ? " repositoryurl;\
+	git remote set-url origin $$repositoryurl;\
+	mv .gitignore.wizard .gitignore
+
+end:
+	@echo "Your project is successfully installed. You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name."
+
+check-git:
+	@if [ $(shell git --version > /dev/null; echo $$?) -ne 0 ];\
+	then\
+		echo "\033[1;41mGit is not installed on this computer. Please run make install-git command.\033[0m";\
+		exit 1;\
+	else\
+		echo "Git is installed.";\
+		git --version; \
+	fi;
 
 check-php:
 	@if [ $(shell php --version > /dev/null; echo $$?) -ne 0 ];\
@@ -27,6 +44,9 @@ check-composer:
 		echo "Composer is installed.";\
 		composer --version; \
   	fi;
+
+install-git:
+	@sudo apt install git-all
 
 install-php:
 	@sudo apt install software-properties-common ca-certificates lsb-release apt-transport-https;\

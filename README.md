@@ -1,2 +1,6 @@
 # symfony-wizard
-Easily setup your Symfony project
+Easily setup your new Symfony project by running
+
+```shell
+$ make install
+```
