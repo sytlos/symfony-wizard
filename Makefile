@@ -11,9 +11,11 @@ check-install:
 
 create-project:
 	@composer create-project symfony/skeleton ./project; \
+	composer require symfony/process; \
 	mv project/* .
 	mv project/.env .
 	mv project/.gitignore .
+	mv Command src
 	rmdir project
 
 git:
@@ -26,6 +28,7 @@ git:
 
 configure-project:
 	@bin/console configure:project
+	bin/console cache:clear
 
 end:
 	@echo "Your project is successfully installed. You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name."
