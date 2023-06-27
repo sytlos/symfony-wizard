@@ -24,12 +24,15 @@ class WizardConfigureProjectCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        ini_set('max_execution_time', '0');
+
         $this->io = new SymfonyStyle($input, $output);
         $this->io->title("Welcome to the Symfony Wizard Tool 🧙");
         $this->io->writeln("We will now configure your project.");
 
         $this->database();
         $this->api();
+        $this->users();
 
         return Command::SUCCESS;
     }
@@ -100,5 +103,30 @@ class WizardConfigureProjectCommand extends Command
 
         $this->io->block($process->getOutput());
         $this->io->success('ApiPlatform successfully installed !');
+    }
+
+    private function users(): void
+    {
+        $this->io->section("👤 Users");
+
+        $withUsers = $this->io->ask("Do you need Users ? (y/n)", "y", function (string $answer): string {
+            if (!in_array(strtolower($answer), ['y', 'n'])) {
+                throw new \RuntimeException('You must answer with y or n.');
+            }
+
+            return strtolower($answer);
+        });
+
+        if ('n' === $withUsers) {
+            return;
+        }
+
+        $process = new Process(['bin/console', 'make:user']);
+        $process->setTty(true);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
     }
 }
