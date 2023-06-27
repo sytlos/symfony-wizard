@@ -1,4 +1,4 @@
-install: check-install check-requirements create-project git end
+install: check-install check-requirements create-project git configure-project end
 
 check-requirements: check-git check-php check-composer
 
@@ -20,6 +20,9 @@ git:
 	git init;\
 	git remote add origin $$repositoryurl;\
 	mv .gitignore.wizard .gitignore
+
+configure-project:
+	@bin/console configure:project
 
 end:
 	@echo "Your project is successfully installed. You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name."
