@@ -29,6 +29,7 @@ class WizardConfigureProjectCommand extends Command
         $this->io->writeln("We will now configure your project.");
 
         $this->database();
+        $this->api();
 
         return Command::SUCCESS;
     }
@@ -66,5 +67,32 @@ class WizardConfigureProjectCommand extends Command
         }
 
         $this->io->success('Doctrine successfully installed !');
+    }
+
+    private function api(): void
+    {
+        $this->io->section("🔎 API");
+
+        $withApi = $this->io->ask("Do you need APIs ? (y/n)", "y", function (string $answer): string {
+            if (!in_array(strtolower($answer), ['y', 'n'])) {
+                throw new \RuntimeException('You must answer with y or n.');
+            }
+
+            return $answer;
+        });
+
+        if (!$withApi) {
+            return;
+        }
+
+        $process = new Process(['composer', 'require', 'api', '--no-scripts']);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $this->io->block($process->getOutput());
+        $this->io->success('ApiPlatform successfully installed !');
     }
 }
