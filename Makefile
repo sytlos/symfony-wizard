@@ -12,6 +12,8 @@ check-install:
 create-project:
 	@composer create-project symfony/skeleton ./project; \
 	mv project/* .
+	mv project/.env .
+	mv project/.gitignore .
 	rmdir project
 
 git:
