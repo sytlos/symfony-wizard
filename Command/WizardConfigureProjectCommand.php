@@ -51,7 +51,13 @@ class WizardConfigureProjectCommand extends Command
         }
 
         $process = new Process(['composer', 'require', 'symfony/orm-pack', '--no-scripts']);
-        $process->run();
+        $process->run(function ($type, $buffer): void {
+            if (Process::ERR === $type) {
+                $this->io->error($buffer);
+            } else {
+                $this->io->writeln($buffer);
+            }
+        });
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
@@ -60,7 +66,13 @@ class WizardConfigureProjectCommand extends Command
         $this->io->block($process->getOutput());
 
         $process = new Process(['composer', 'require', '--dev', 'symfony/maker-bundle', '--no-scripts']);
-        $process->run();
+        $process->run(function ($type, $buffer): void {
+            if (Process::ERR === $type) {
+                $this->io->error($buffer);
+            } else {
+                $this->io->writeln($buffer);
+            }
+        });
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
@@ -86,7 +98,13 @@ class WizardConfigureProjectCommand extends Command
         }
 
         $process = new Process(['composer', 'require', 'api', '--no-scripts']);
-        $process->run();
+        $process->run(function ($type, $buffer): void {
+            if (Process::ERR === $type) {
+                $this->io->error($buffer);
+            } else {
+                $this->io->writeln($buffer);
+            }
+        });
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
