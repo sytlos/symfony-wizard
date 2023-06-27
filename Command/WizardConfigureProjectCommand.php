@@ -43,10 +43,10 @@ class WizardConfigureProjectCommand extends Command
                 throw new \RuntimeException('You must answer with y or n.');
             }
 
-            return $answer;
+            return strtolower($answer);
         });
 
-        if (!$withDatabase) {
+        if ('n' === $withDatabase) {
             return;
         }
 
@@ -78,10 +78,10 @@ class WizardConfigureProjectCommand extends Command
                 throw new \RuntimeException('You must answer with y or n.');
             }
 
-            return $answer;
+            return strtolower($answer);
         });
 
-        if (!$withApi) {
+        if ('n' === $withApi) {
             return;
         }
 
