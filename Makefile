@@ -1,6 +1,13 @@
-install: check-requirements create-project git end
+install: check-install check-requirements create-project git end
 
 check-requirements: check-git check-php check-composer
+
+check-install:
+	@if test -f "composer.json";\
+	then\
+        echo "Your project is already installed.";\
+        exit 1;\
+    fi;
 
 create-project:
 	@read -p "Enter project name: " projectname;\
