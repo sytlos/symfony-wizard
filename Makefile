@@ -10,16 +10,17 @@ check-install:
     fi;
 
 create-project:
-	@read -p "Enter project name: " projectname;\
-	composer create-project symfony/skeleton ./$$projectname; \
-	mv $$projectname/* .
+	@composer create-project symfony/skeleton ./project; \
+	mv project/* .
+	rmdir project
 
 git:
 	@read -p "What is your Git repository url ? " repositoryurl;\
 	rm -fr .git;\
 	git init;\
 	git remote add origin $$repositoryurl;\
-	mv .gitignore.wizard .gitignore
+	cat .gitignore.wizard >> .gitignore
+	rm .gitignore.wizard
 
 configure-project:
 	@bin/console configure:project

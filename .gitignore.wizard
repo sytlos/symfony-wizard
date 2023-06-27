@@ -1,4 +1,1 @@
 Makefile
-vendor/
-var/cache/
-var/log/
