@@ -11,20 +11,20 @@ check-install:
 
 create-project:
 	@composer create-project symfony/skeleton ./project; \
-	composer require symfony/process; \
-	mv project/* .
-	mv project/.env .
-	mv project/.gitignore .
-	mv Command src
-	rmdir project
+	mv project/* .;\
+	mv project/.env .;\
+	mv project/.gitignore .;\
+	mv Command src;\
+	rmdir project;\
+	composer require symfony/process;
 
 git:
 	@read -p "What is your Git repository url ? " repositoryurl;\
 	rm -fr .git;\
 	git init;\
 	git remote add origin $$repositoryurl;\
-	cat .gitignore.wizard >> .gitignore
-	rm .gitignore.wizard
+	cat .gitignore.wizard >> .gitignore;\
+	rm .gitignore.wizard;
 
 configure-project:
 	@bin/console configure:project
