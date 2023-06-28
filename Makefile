@@ -1,4 +1,4 @@
-install: check-install check-requirements symfony-docker create-project git configure-project end
+install: check-install check-requirements symfony-docker git configure-project end
 
 check-requirements: check-git check-docker check-docker-compose
 
@@ -14,15 +14,8 @@ symfony-docker:
 	mv symfony-docker/* .;\
 	rm -fr symfony-docker;\
 	docker-compose build --pull --no-cache;\
-	docker-compose up -d;
-
-create-project:
-	@docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php composer create-project symfony/skeleton ./project; \
-	mv project/* .;\
-	mv project/.env .;\
-	mv project/.gitignore .;\
-	mv Command src;\
-	rmdir project;\
+	docker-compose up -d;\
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mv Command src;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php composer require symfony/process;
 
 git:
