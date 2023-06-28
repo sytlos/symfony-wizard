@@ -1,6 +1,6 @@
-install: check-install check-requirements create-project git configure-project end
+install: check-install check-requirements symfony-docker create-project git configure-project end
 
-check-requirements: check-git check-php check-composer
+check-requirements: check-git check-docker check-docker-compose
 
 check-install:
 	@if test -f "composer.json";\
@@ -9,14 +9,21 @@ check-install:
         exit 1;\
     fi;
 
+symfony-docker:
+	@git clone https://github.com/dunglas/symfony-docker.git;\
+	mv symfony-docker/* .;\
+	rm -fr symfony-docker;\
+	docker-compose build --pull --no-cache;\
+	docker-compose up -d;
+
 create-project:
-	@composer create-project symfony/skeleton ./project; \
+	@docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php composer create-project symfony/skeleton ./project; \
 	mv project/* .;\
 	mv project/.env .;\
 	mv project/.gitignore .;\
 	mv Command src;\
 	rmdir project;\
-	composer require symfony/process;
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php composer require symfony/process;
 
 git:
 	@read -p "What is your Git repository url ? " repositoryurl;\
@@ -27,8 +34,8 @@ git:
 	rm .gitignore.wizard;
 
 configure-project:
-	@bin/console configure:project
-	bin/console cache:clear
+	@docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bin/console configure:project
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bin/console cache:clear
 
 end:
 	@echo "Your project is successfully installed. You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name."
@@ -43,39 +50,31 @@ check-git:
 		git --version; \
 	fi;
 
-check-php:
-	@if [ $(shell php --version > /dev/null; echo $$?) -ne 0 ];\
+check-docker:
+	@if [ $(shell docker --version > /dev/null; echo $$?) -ne 0 ];\
 	then\
-		echo "\033[1;41mPHP is not installed on this computer. Please run make install-php command.\033[0m";\
+		echo "\033[1;41mDocker is not installed on this computer. Please run make install-docker command.\033[0m";\
 		exit 1;\
 	else\
-		echo "PHP is installed.";\
-		php --version; \
-  	fi;
+		echo "Docker is installed.";\
+		docker --version; \
+	fi;
 
-check-composer:
-	@if [ $(shell composer --version > /dev/null; echo $$?) -ne 0 ];\
+check-docker-compose:
+	@if [ $(shell docker-compose --version > /dev/null; echo $$?) -ne 0 ];\
 	then\
-		echo "\033[1;41mComposer is not installed on this computer. Please run make install-composer command.\033[0m";\
+		echo "\033[1;41mdocker-compose is not installed on this computer. Please run make install-docker-compose command.\033[0m";\
 		exit 1;\
 	else\
-		echo "Composer is installed.";\
-		composer --version; \
-  	fi;
+		echo "docker-compose is installed.";\
+		docker-compose --version; \
+	fi;
 
 install-git:
-	@sudo apt install git-all
+	@sudo apt install -y git-all
 
-install-php:
-	@sudo apt install software-properties-common ca-certificates lsb-release apt-transport-https;\
-	LC_ALL=C.UTF-8 sudo add-apt-repository ppa:ondrej/php; \
-	sudo apt update; \
-	sudo apt install php8.2; \
-	sudo apt install php8.2-xml
+install-docker:
+	@sudo apt install -y docker
 
-install-composer:
-	@php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"; \
-    php composer-setup.php; \
-    php -r "unlink('composer-setup.php');"; \
-    sudo mv composer.phar /usr/local/bin/composer
+install-docker-compose:
+	@sudo apt install -y docker-compose
