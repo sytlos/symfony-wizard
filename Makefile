@@ -25,6 +25,7 @@ symfony-docker:
 git:
 	@read -p "What is your Git repository url ? " repositoryurl;\
 	rm -fr .git;\
+	git config --global --add safe.directory '*';\
 	git init;\
 	git remote add origin $$repositoryurl;\
 	cat .gitignore.wizard >> .gitignore;\
