@@ -15,7 +15,9 @@ symfony-docker:
 	rm -fr symfony-docker;\
 	docker-compose build --pull --no-cache;\
 	docker-compose up -d;\
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mv Command src;\
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mkdir src/Command;\
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mv Command/* src/Command;\
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php rmdir Command;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php composer require symfony/process;
 
 git:
