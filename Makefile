@@ -1,6 +1,6 @@
 install: check-install check-requirements symfony-docker git configure-project
 
-check-requirements: check-git check-docker check-docker-compose
+check-requirements: check-git check-docker check-docker-compose check-port
 
 check-install:
 	@if test -f "composer.json";\
@@ -14,7 +14,7 @@ symfony-docker:
 	mv symfony-docker/* .;\
 	rm -fr symfony-docker;\
 	docker-compose build --pull --no-cache;\
-	docker-compose down;\
+	docker-compose down --remove-orphans;\
 	docker-compose up -d;\
 	sudo chmod -R 777 .;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mkdir src/Command;\
@@ -63,6 +63,13 @@ check-docker-compose:
 	else\
 		echo "docker-compose is installed.";\
 		docker-compose --version; \
+	fi;
+
+check-port:
+	@if [ $(shell docker container ls | grep "80/tcp" | wc -l) -ne 0 ];\
+	then\
+		echo "\033[1;41mPort 80 is already allocated.\033[0m";\
+		exit 1;\
 	fi;
 
 install-git:
