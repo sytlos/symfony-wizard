@@ -14,8 +14,9 @@ symfony-docker:
 	mv symfony-docker/* .;\
 	rm -fr symfony-docker;\
 	docker-compose build --pull --no-cache;\
-	docker-compose stop;\
+	docker-compose down;\
 	docker-compose up -d;\
+	sudo chmod -R 777 .;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mkdir src/Command;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php mv Command/* src/Command;\
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php rmdir Command;\
