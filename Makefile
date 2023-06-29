@@ -1,4 +1,4 @@
-install: check-install check-requirements symfony-docker git configure-project end
+install: check-install check-requirements symfony-docker git configure-project
 
 check-requirements: check-git check-docker check-docker-compose
 
@@ -34,9 +34,6 @@ git:
 configure-project:
 	@docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bin/console configure:project
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bin/console cache:clear
-
-end:
-	@echo "Your project is successfully installed. You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name."
 
 check-git:
 	@if [ $(shell git --version > /dev/null; echo $$?) -ne 0 ];\

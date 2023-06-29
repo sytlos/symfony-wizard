@@ -34,6 +34,9 @@ class WizardConfigureProjectCommand extends Command
         $this->api();
         $this->users();
 
+        $this->io->success('Your Symfony app was successfully configured. Open https://localhost in your favorite web browser to access it.');
+        $this->io->info('You can now delete the Makefile and the README.md file and rename the symfony-wizard folder with your project name.');
+
         return Command::SUCCESS;
     }
 
@@ -128,5 +131,17 @@ class WizardConfigureProjectCommand extends Command
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+
+        $process = new Process(['bin/console', 'make:migration']);
+        $process->run(function ($type, $buffer): void {
+            $this->io->writeln($buffer);
+        });
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $this->io->block($process->getOutput());
+        $this->io->success('User entity successfully created !');
     }
 }
